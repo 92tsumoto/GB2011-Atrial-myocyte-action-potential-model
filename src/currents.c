@@ -68,7 +68,7 @@ void comp_ik1 (double x[])
 {
        
 	ik1.ak1 = 1.02/(1.0+exp(0.2385*(x[0]-var.Ek-59.215)));
-	ik1.bk1 = (0.49124*exp(0.08032*(x[0]-var.Ek+5.476))+exp(0.06175*(x[0]-var.Ek-594.31)))/(1.0+exp(-0.5143*(x[0]-var.Ek+4,753)));
+	ik1.bk1 = (0.49124*exp(0.08032*(x[0]-var.Ek+5.476))+exp(0.06175*(x[0]-var.Ek-594.31)))/(1.0+exp(-0.5143*(x[0]-var.Ek+4.753)));
 
 	ik1.k1ss = ik1.ak1/(ik1.ak1 + ik1.bk1);
 
@@ -223,19 +223,24 @@ void comp_ical(double x[])
 	ical.fcaCaMSL = 0.0;
 	ical.fcaCaj = 0.0;
 
-	ical.bar_ca_j =ical.pca*4.0*(x[0]*F/var.RTonF)*(0.341*x[38]*exp(x[0]/var.RTon2F)-0.341*var.cao)/(exp(x[0]/var.RTon2F)-1.0);
-	ical.bar_ca_sl =ical.pca*4.0*(x[0]*F/var.RTonF)*(0.341*x[39]*exp(x[0]/var.RTon2F)-0.341*var.cao)/(exp(x[0]/var.RTon2F)-1.0);
+	// temporary val
+	ical.tmp1 = ical.Ttmp1[iV]*d2 + ical.Ttmp1[iV+1]*d1;
+	ical.tmp2 = ical.Ttmp2[iV]*d2 + ical.Ttmp2[iV+1]*d1;
 
-	ical.bar_k =ical.pk*(x[0]*F/var.RTonF)*(0.75*x[37]*exp(x[0]/var.RTonF)-0.75*var.ko)/(exp(x[0]/var.RTonF)-1.0);
+
+	ical.bar_ca_j =ical.pca*4.0*(x[0]*F/var.RTonF)*(0.341*x[38]*ical.tmp1-0.341*var.cao)/(ical.tmp1-1.0);
+	ical.bar_ca_sl =ical.pca*4.0*(x[0]*F/var.RTonF)*(0.341*x[39]*ical.tmp1-0.341*var.cao)/(ical.tmp1-1.0);
+
+	ical.bar_k =ical.pk*(x[0]*F/var.RTonF)*(0.75*x[37]*ical.tmp2-0.75*var.ko)/(ical.tmp2-1.0);
 	
-	ical.bar_na_j =ical.pna*(x[0]*F/var.RTonF)*(0.75*x[34]*exp(x[0]/var.RTonF)-0.75*var.nao)/(exp(x[0]/var.RTonF)-1.0);
-	ical.bar_na_sl =ical.pna*(x[0]*F/var.RTonF)*(0.75*x[35]*exp(x[0]/var.RTonF)-0.75*var.nao)/(exp(x[0]/var.RTonF)-1.0);
+	ical.bar_na_j =ical.pna*(x[0]*F/var.RTonF)*(0.75*x[34]*ical.tmp2-0.75*var.nao)/(ical.tmp2-1.0);
+	ical.bar_na_sl =ical.pna*(x[0]*F/var.RTonF)*(0.75*x[35]*ical.tmp2-0.75*var.nao)/(ical.tmp2-1.0);
 
 	ical.junc = (var.Fjunc_CaL*ical.bar_ca_j*x[12]*x[13]*((1.0-x[14])+ical.fcaCaj)*pow(ical.Q10CaL,ical.Qpow))*0.45;
 	ical.sl = (var.Fsl_CaL*ical.bar_ca_sl*x[12]*x[13]*((1.0-x[15])+ical.fcaCaMSL)*pow(ical.Q10CaL,ical.Qpow))*0.45;
 	ical.ca = ical.junc + ical.sl;
 
-	ical.k = (ical.bar_k*x[12]*x[13]*(var.Fjunc_CaL*(ical.fcaCaj+(1.0-x[14]))+var.Fsl_CaL*(ical.fcaCaMSL+(1.0-x[15])))*pow(ical.Q10CaL,ical.Qpow))*0.45;
+	ical.k = (ical.bar_k*x[12]*x[13]*(var.Fjunc_CaL*((1.0-x[14])+ical.fcaCaj)+var.Fsl_CaL*((1.0-x[15])+ical.fcaCaMSL))*pow(ical.Q10CaL,ical.Qpow))*0.45;
 
 	ical.cana_j = (var.Fjunc_CaL*ical.bar_na_j*x[12]*x[13]*((1.0-x[14])+ical.fcaCaj)*pow(ical.Q10CaL,ical.Qpow))*0.45;
 	ical.cana_sl = (var.Fsl_CaL*ical.bar_na_sl*x[12]*x[13]*((1.0-x[15])+ical.fcaCaMSL)*pow(ical.Q10CaL,ical.Qpow))*0.45;
@@ -356,18 +361,20 @@ void comp_jrel (double x[])
 
 void comp_buffer (double x[])
 {
-	//buf.J_CaB_cytosol = x[21]+x[27];
+	//J_CaB_cytosol = f[21]+f[22]+f[23]+f[24]+f[25]+f[26]+f[27];
 	buf.J_CaB_cytosol = (buf.kon_tncl*x[40]*(buf.Bmax_TnClow-x[21])-buf.koff_tncl*x[21])
 						+ (buf.kon_tnchca*x[40]*(buf.Bmax_TnChigh-x[22]-x[23])-buf.koff_tnchca*x[22])
 						+ (buf.kon_tnchmg*var.mgi*(buf.Bmax_TnChigh-x[22]-x[23])-buf.koff_tnchmg*x[23])
 						+ (buf.kon_cam*x[40]*(buf.Bmax_CaM-x[24])-buf.koff_cam*x[24]);
 						+ (buf.kon_myoca*x[40]*(buf.Bmax_myosin-x[25]-x[26])-buf.koff_myoca*x[25])
-						+ (buf.kon_myomg*x[40]*(buf.Bmax_myosin-x[25]-x[26])-buf.koff_myomg*x[26])
+						+ (buf.kon_myomg*var.mgi*(buf.Bmax_myosin-x[25]-x[26])-buf.koff_myomg*x[26])
 						+ (buf.kon_sr*x[40]*(buf.Bmax_SR-x[27])-buf.koff_sr*x[27]);
-	buf.J_CaB_junction = buf.kon_sll*x[38]*(buf.Bmax_SLlowj-x[28])-buf.koff_sll*x[28]
-						+ buf.kon_slh*x[38]*(buf.Bmax_SLhighj-x[30])-buf.koff_slh*x[30];
-	buf.J_CaB_sl = buf.kon_sll*x[39]*(buf.Bmax_SLlowsl-x[29])-buf.koff_sll*x[29]
-					+ buf.kon_slh*x[39]*(buf.Bmax_SLhighsl-x[31])-buf.koff_slh*x[31];
+	//J_CaB_junction = f[28]+f[30]
+	buf.J_CaB_junction = (buf.kon_sll*x[38]*(buf.Bmax_SLlowj-x[28])-buf.koff_sll*x[28])
+						+ (buf.kon_slh*x[38]*(buf.Bmax_SLhighj-x[30])-buf.koff_slh*x[30]);
+	//J_CaB_sl = f[29]+f[31]
+	buf.J_CaB_sl = (buf.kon_sll*x[39]*(buf.Bmax_SLlowsl-x[29])-buf.koff_sll*x[29]) 
+					+ (buf.kon_slh*x[39]*(buf.Bmax_SLhighsl-x[31])-buf.koff_slh*x[31]);
 	//printf("J_CaB_sytosol=%lf J_CaB_junction=%lf J_CaB_sl=%lf\n",buf.J_CaB_cytosol,buf.J_CaB_junction,buf.J_CaB_sl);
 
 }
