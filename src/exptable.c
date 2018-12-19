@@ -29,23 +29,23 @@ void make_ExpTable()
 				ah = 0.0;
 			}
 			if(v<-40.0){
-				bh = ((2.7 * exp( 0.079 * v) + 3.1E+5 * exp(0.3485 * v)));
+				bh = 2.7*exp(0.079*v)+3.1E+5*exp(0.3485*v);
 			} else {
-				bh = 0.77/(0.13*(1.0+exp( -(v+10.66) / 11.1 )));
+				bh = 0.77/(0.13*(1.0+exp(-(v+10.66)/11.1)));
 			}
 			ina.Ttauh[vindex] = 1.0/(ah+bh);
 		
 			ina.Tjss[vindex] = ina.Thss[vindex];	// 1.0/((1.0+exp((v+71.55)/7.43))*(1.0+exp((v+71.55)/7.43)));
 			
 			if(v<-40.0){
-				aj = (((-2.5428E+4*exp(0.2444*v) - 6.948E-6 * exp(-0.04391*v)) * (v + 37.78)) / (1.0 + exp( 0.311 * (v + 79.23) )));
+				aj = ((-2.5428E+4*exp(0.2444*v)-6.948E-6*exp(-0.04391*v))*(v+37.78))/(1.0+exp(0.311*(v+79.23)));
 			} else {
 				aj = 0.0;
 			}
 			if(v<-40.0){
-				bj = ((0.02424*exp( -0.01052*v )) / (1.0 + exp( -0.1378*(v + 40.14) )));
+				bj = (0.02424*exp(-0.01052*v))/(1.0+exp(-0.1378*(v+40.14)));
 			} else {
-				bj = ((0.6 * exp( 0.057 * v)) / (1.0 + exp( -0.1 * (v + 32.0) )));
+				bj = (0.6*exp(0.057*v))/(1.0+exp(-0.1*(v+32.0)));
 			}
 			ina.Ttauj[vindex] = 1.0/(aj+bj);
 
@@ -90,14 +90,18 @@ void make_ExpTable()
 		}
 	*/	
 		// Late INa
-		aml = 0.32*(v+47.13)/(1.0-exp(-0.1*(v+47.13)));
+		if(fabs(v+47.13)<0.001){
+			aml = 0.16*v+10.7408;
+		} else {
+			aml = 0.32*(v+47.13)/(1.0-exp(-0.1*(v+47.13)));
+		}
 		bml = 0.08*exp(-v/11.0);
 		ina.Tmlss[vindex] = aml/(aml+bml);
 		ina.Ttauml[vindex] = 1.0/(aml+bml);
 		ina.Thlss[vindex] = 1.0/(1.0+exp((v+91.0)/6.1));
 
 		// for ikr 
-		ikr.Txrss[vindex] = 1.0/(1.0+exp((-10.0-v)/5.0));
+		ikr.Txrss[vindex] = 1.0/(1.0+exp(-(v+10.0)/5.0));
 		ikr.Ttauxr[vindex] = 550.0/(1.0+exp((-22.0-v)/9.0))*6.0/(1.0+exp((v+11.0)/9.0)) + 230.0/(1.0+exp((v+40.0)/20.0));
 		ikr.Trkr[vindex] = 1.0/(1.0+exp((v+74.0)/24.0));
 
@@ -135,7 +139,7 @@ void make_ExpTable()
 				ical.Ttaud[vindex] = (1.0-exp(-(v+9.0)/6.0))/(0.035*(v+9.0));
 			}
 		} else if(var.simtype == 1){	// with ISO stimulation
-			ical.Tdss[vindex] = 1.0/(1.0+exp(-(v+9.0+3.0)/7.5));
+			ical.Tdss[vindex] = 1.0/(1.0+exp(-(v+9.0+3.0)/6.0));
 			if(fabs(v+9.0+3.0)<0.001){
 				ical.Ttaud[vindex] = -0.397*v;	// -(25*v/63)
 			} else {
@@ -150,6 +154,8 @@ void make_ExpTable()
 			ical.Tfss[vindex] = 1.0/(1.0+exp((v+30.0+3.0)/7.0))+0.2/(1.0+exp((50.0-v-3.0)/20.0));
 			ical.Ttauf[vindex] = 1.0/(0.0197*exp(-(0.0337*(v+25.0+3.0))*(0.0337*(v+25.0+3.0)))+0.02);
 		}
+		ical.Ttmp1[vindex] = exp(v/var.RTon2F);
+		ical.Ttmp2[vindex] = exp(v/var.RTonF);
 
 		// inak 
 		inak.Tknai[vindex] = 0.1245*exp((-0.1*v)/var.RTonF);
