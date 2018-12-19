@@ -55,7 +55,9 @@ void initial_mem()
 	ical.Ttaud=(Number *)calloc(VNMAX,sizeof(Number));
 	ical.Tfss=(Number *)calloc(VNMAX,sizeof(Number));
 	ical.Ttauf=(Number *)calloc(VNMAX,sizeof(Number));
-	if( ical.Tdss==NULL || ical.Ttaud==NULL || ical.Tfss==NULL || ical.Ttauf==NULL ) exit(1);
+	ical.Ttmp1=(Number *)calloc(VNMAX,sizeof(Number));
+	ical.Ttmp2=(Number *)calloc(VNMAX,sizeof(Number));
+	if( ical.Tdss==NULL || ical.Ttaud==NULL || ical.Tfss==NULL || ical.Ttauf==NULL || ical.Ttmp1==NULL || ical.Ttmp2==NULL) exit(1);
 
 	// inak
 	inak.Tknai=(Number *)calloc(VNMAX,sizeof(Number));
@@ -80,7 +82,7 @@ void closed_mem()
 	free(iks.Txsss); free(iks.Ttauxs);
 	free(ikp.Tss); 
 	free(ikur.Txkurss); free(ikur.Ttauxkur); free(ikur.Tykurss); free(ikur.Ttauykur);
-	free(ical.Tdss); free(ical.Ttaud); free(ical.Tfss); free(ical.Ttauf); 
+	free(ical.Tdss); free(ical.Ttaud); free(ical.Tfss); free(ical.Ttauf); free(ical.Ttmp1); free(ical.Ttmp2);
 	free(inak.Tknai); free(inak.Tknao);
 	free(ncx.Thna); free(ncx.Thca);
 
