@@ -25,9 +25,8 @@ void function(double x[],double f[],double t)
 	comp_buffer(x);
 
 		if(var.deb==1){ 
+            printf("time=%lf Istim=%lf ",t,var.Istim);
 			for(i=0;i<NN;i++){printf("%e ", x[i]);}
-            printf("\n");
-            printf("time=%lf,Istim=%lf\n",t,var.Istim);
             printf("ENa_junc=%lf, ENa_sl=%lf, EK=%lf ECa_junc=%lf ECa_sl=%lf Ecl=%lf\n",
 				var.Ena_junc,var.Ena_sl,var.Ek,var.Eca_junc,var.Eca_sl,var.Ecl);
         }
@@ -73,7 +72,7 @@ void function(double x[],double f[],double t)
 	f[15] = 1.7*x[39]*(1.0 - x[15])-11.9E-3*x[15];
 	// Jrel
 	f[16] = (jrel.kim*jrel.ri-jrel.kisrca*x[38]*x[16])-(jrel.kosrca*x[38]*x[38]*x[16] -jrel.kom*x[17]);	// R
-	f[17] = (jrel.kosrca*x[38]*x[38]*x[16]-jrel.kom*x[17])-(jrel.kisrca*x[38]*x[17]-jrel.kom*x[18]); 	// O
+	f[17] = (jrel.kosrca*x[38]*x[38]*x[16]-jrel.kom*x[17])-(jrel.kisrca*x[38]*x[17]-jrel.kim*x[18]); 	// O
 	f[18] = (jrel.kisrca*x[38]*x[17] - jrel.kim*x[18])-(jrel.kom*x[18]-jrel.kosrca*x[38]*x[38]*jrel.ri);	// I
 	// Na and Ca buffering
 	f[19] = buf.kon_na*x[34]*(buf.Bmax_Naj-x[19])-buf.koff_na*x[19];	// NaBj	 (mM/ms)
@@ -84,7 +83,7 @@ void function(double x[],double f[],double t)
 	f[23] = buf.kon_tnchmg*var.mgi*(buf.Bmax_TnChigh-x[22]-x[23])-buf.koff_tnchmg*x[23];	// TnCHm (mM/ms)
 	f[24] = buf.kon_cam*x[40]*(buf.Bmax_CaM-x[24])-buf.koff_cam*x[24];	// CaM (mM/ms)
 	f[25] = buf.kon_myoca*x[40]*(buf.Bmax_myosin-x[25]-x[26])-buf.koff_myoca*x[25];	// Myosin_Ca (mM/ms)
-	f[26] = buf.kon_myomg*x[40]*(buf.Bmax_myosin-x[25]-x[26])-buf.koff_myomg*x[26];	// Myosin_Mg (mM/ms)
+	f[26] = buf.kon_myomg*var.mgi*(buf.Bmax_myosin-x[25]-x[26])-buf.koff_myomg*x[26];	// Myosin_Mg (mM/ms)
 	f[27] = buf.kon_sr*x[40]*(buf.Bmax_SR-x[27])-buf.koff_sr*x[27];	// SRB (mM/ms)
 	// Junctional and SL Ca Buffers
 	f[28] = buf.kon_sll*x[38]*(buf.Bmax_SLlowj-x[28])-buf.koff_sll*x[28];	//SLLj (mM/ms)
@@ -94,7 +93,7 @@ void function(double x[],double f[],double t)
 	// Csqn buffering
 	f[32] = buf.kon_csqn*x[33]*(buf.Bmax_Csqn-x[32])-buf.koff_csqn*x[32];	// Csqn (mM/ms)
 	// [Ca]sr
-	f[33] = jrel.SERCA-(jrel.SRleak*var.vmyo/var.vsr + jrel.SRCarel)-x[32];
+	f[33] = jrel.SERCA-(jrel.SRleak*var.vmyo/var.vsr + jrel.SRCarel)-(buf.kon_csqn*x[33]*(buf.Bmax_Csqn-x[32])-buf.koff_csqn*x[32]);
 	// [Na]j
 	f[34] = -ina.tot_junc*var.Cmem/(var.vjunc*F) + var.J_na_juncsl/var.vjunc*(x[35]-x[34]) 
 			- (buf.kon_na*x[34]*(buf.Bmax_Naj-x[19])-buf.koff_na*x[19]);	// [Na]j
