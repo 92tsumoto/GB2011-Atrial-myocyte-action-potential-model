@@ -5,7 +5,7 @@
 #include "syspara.h"
 
 FILE *fopen(), *fpin, *fp0, *fp1, *fp2, *fp3;
-FILE *fp4, *fp5, *fp6, *fp7, *fp8, *fp9;
+FILE *fp4, *fp5, *fp6, *fp7, *fp8, *fp9, *fp10;
 int mode = 1;
 int P = 2;
 int beats = 10;
@@ -116,6 +116,10 @@ char **argv;
 			printf("Can't open File\n");
 			exit(1);
 		}
+		if ((fp10 = fopen("ikach.out","w")) == NULL){
+			printf("Can't open File\n");
+			exit(1);
+		}
 	}
 
 	xhplot(WINDOW, 700.0, 700.0, WHITE);
@@ -191,7 +195,7 @@ char **argv;
 					if(j%10==0){
 						data_out(fp2,ttime,x);
 						if(var.out_data){
-							current(fp4,fp5,fp6,fp7,fp8,fp9,ttime,x);
+							current(fp4,fp5,fp6,fp7,fp8,fp9,fp10,ttime,x);
 						}
 					}
 				}
@@ -219,7 +223,7 @@ char **argv;
 					if(j%10==0){
 						data_out(fp2,ttime,x);
 						if(var.out_data){
-							current(fp4,fp5,fp6,fp7,fp8,fp9,ttime,x);
+							current(fp4,fp5,fp6,fp7,fp8,fp9,fp10,ttime,x);
 						}
 					}
 				}
@@ -257,7 +261,7 @@ char **argv;
 	fclose(fp2);
 	fclose(fp3);
 	if(var.write0){
-		fclose(fp4);fclose(fp5);fclose(fp6);fclose(fp7);fclose(fp8);fclose(fp9);
+		fclose(fp4);fclose(fp5);fclose(fp6);fclose(fp7);fclose(fp8);fclose(fp9);fclose(fp10);
 	}
 	//free(vmax);free(dvdtmax);free(apd);free(toneapd);free(ttwoapd);
 	//free(rmbp);free(nair);free(cair);free(kir);

@@ -10,6 +10,7 @@ void input_para(FILE *fpin)
 	fscanf(fpin,"%lf",&var.BCL);
 	fscanf(fpin,"%lf",&var.ndis);
 	fscanf(fpin,"%lf",&var.Istim_base);
+	fscanf(fpin,"%lf",&var.ACh);
 	fscanf(fpin,"%d",&var.datas);
 	for (ii = 0; ii < var.datas; ii++){
 		fscanf(fpin, "%d", &var.line_wid[ii]);

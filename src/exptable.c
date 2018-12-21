@@ -106,7 +106,7 @@ void make_ExpTable()
 		ikr.Trkr[vindex] = 1.0/(1.0+exp((v+74.0)/24.0));
 
 		// for iks 
-		if(var.simtype==0){	// control
+		if(var.simtype==0 || var.simtype==2){	// control
 			iks.Txsss[vindex] = 1.0/(1.0+exp((-3.8-v)/14.25));
 			iks.Ttauxs[vindex] = 990.1/(1.0+exp(-(v+2.436)/14.12));
 		} else if(var.simtype == 1){ // with ISO stimulation
@@ -131,7 +131,7 @@ void make_ExpTable()
 		ikur.Ttauykur[vindex] = 590.0/(1.0+exp((v+60.0)/10.0)) + 3050.0;
 
 		// for ical
-		if(var.simtype==0){	// control;
+		if(var.simtype==0 || var.simtype==2){	// control;
 			ical.Tdss[vindex] = 1.0/(1.0+exp(-(v+9.0)/6.0));
 			if(fabs(v+9)<0.001){
 				ical.Ttaud[vindex] = 1.19;
@@ -147,7 +147,7 @@ void make_ExpTable()
 			}
 		}
 		
-		if(var.simtype == 0){	// control
+		if(var.simtype == 0 || var.simtype==2){	// control
 			ical.Tfss[vindex] = 1.0/(1.0+exp((v+30.0)/7.0))+0.2/(1.0+exp((50.0-v)/20.0));
 			ical.Ttauf[vindex] = 1.0/(0.0197*exp(-(0.0337*(v+25.0))*(0.0337*(v+25.0)))+0.02);
 		} else if(var.simtype == 1){
@@ -165,6 +165,9 @@ void make_ExpTable()
 		ncx.Thca[vindex] = exp(ncx.gamma*v/var.RTonF);
 		ncx.Thna[vindex] = exp((ncx.gamma-1.0)*v/var.RTonF);
 		
+		// ik,ach
+		ikach.Tss[vindex] = 0.08 + 0.04/(1.0+exp((v+91.0)/12.0));
+
 	} //for i loop end
 
 

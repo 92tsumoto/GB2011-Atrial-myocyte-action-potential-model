@@ -40,7 +40,7 @@ struct varstruct {
 	// 0: control, 1: isAF
 	int celltype;
 	// simulation type
-	// 0: without, 1: with ISO stimulation
+	// 0: without, 1: with ISO stimulation, 2: with Ach stimulation
 	int simtype;
 
 	// Cell Geometry
@@ -77,14 +77,15 @@ struct varstruct {
 	double nao,ko,cao,clo;
 	double mgi,cli;
 
-	// Block rate
-	double INaB,INaLB,IKrB,IKsB,IKpB,IKurB;
+	// Ach (concentration; microM)
+	double ACh;
 
 	// Base Currnt Stimulus
 	double Istim_base;
 
 	// test variable
 	double dt,dvdt;
+
 	// Sttimulus parameters
 	double BCL;  // Base cycle length = stimulus period
 	int beat; // Number of stimulus
@@ -201,6 +202,7 @@ struct icalstruct {
 
 	double dss,taud,fss,tauf;
 	double *Tdss,*Ttaud,*Tfss,*Ttauf;
+	double tmp1,tmp2,*Ttmp1,*Ttmp2;
 	double fcaCaMSL,fcaCaj,fcaCa;
 	double bar_ca_j,bar_ca_sl;
 	double bar_k;
@@ -249,20 +251,34 @@ struct ipcastruct {
 
 // Na Background Current
 struct inabstruct {
+
 	double Gnab;
 	double junc,sl,na;
+
 } inab;
 
 // Ca Background Current
 struct icabstruct {
+
 	double Gcab;
 	double junc,sl,ca;
+
 } icab;
 
 // Background Cl current (ICaCl)
 struct iclbstruct {
+
 	double G,cftr,cl;
+
 } iclb;
+
+// I_K,ACh
+struct ikachstruct{
+
+	double ik;
+	double *Tss,ss;
+
+} ikach;
 
 // Calcium leak via SERCA pump
 struct jleakstruct {
@@ -348,7 +364,7 @@ void draw_p(int *mode, int P, double x[], double x2);
 void mouse(int *mode, double x[], double x2);
 
 void data_out(FILE *, double t, double u[]);
-void current(FILE *,FILE *,FILE *,FILE *,FILE *,FILE *, double t,double x[]);
+void current(FILE *,FILE *,FILE *,FILE *,FILE *,FILE *,FILE *, double t,double x[]);
 
 void out_ikr (FILE *, double time, double p[]);
 void out_iks (FILE *, double time, double p[]);
@@ -356,6 +372,7 @@ void out_ical(FILE *, double time, double p[]);
 void out_inaca (FILE *f, double time, double p[]);
 void out_inak (FILE *f, double time, double p[]);
 void out_cicr (FILE *f, double time, double p[]);
+void out_ikach (FILE *, double time, double p[]);
 
 void comp_reversal_potential(double x[]);
 void comp_ina(double x[]);
@@ -376,6 +393,7 @@ void comp_iclca(double x[]);
 void comp_buffer(double x[]);
 void comp_jrel(double x[]);
 void comp_concentration (double x[]);
+void comp_ikach(double x[]);
 
 void current_ikr(FILE *, double t, double x[]);
 void current_iks(FILE *, double t, double x[]);
@@ -387,5 +405,6 @@ void current_ina(FILE *, double t, double x[]);
 void current_ito(FILE *, double t, double x[]);
 void current_it(FILE *, double t, double x[]);
 void current_irel(FILE *, double t, double x[]);
+void current_ikach(FILE *, double t, double x[]);
 
 main(int argc,char **argv);

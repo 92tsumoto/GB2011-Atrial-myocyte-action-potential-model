@@ -22,13 +22,13 @@ void val_consts(FILE *fp1)
 	var.Fsl_CaL = 1.0-var.Fjunc_CaL;
 
 	var.ageo = 2.0*M_PI*var.a*var.a + 2.0*M_PI*var.a*var.length;  // eometric membrane area (um^2)
-	var.acap = var.ageo*2.0;		// Capacitive membrane area --> (pF)
-	var.Cmem = 1.1E-10;			// (F) membrane capacitance 1.3810E-10
+	var.acap = var.ageo*2.0;		// Capacitive membrane area --> 142.0 (pF)
+	var.Cmem = 1.1E-10;			// (F) membrane capacitance 1.3810E-10 --> 138.1 (pF)
 
 	var.J_na_juncsl = 1.0/(1.6382E+12/3.0*100.0);	// (L/ms)=6.1043E-13
 	var.J_na_slmyo = 1.0/(1.8308E+10/3.0*100.0);	// (L/ms)=5.4621E-11
 	var.J_ca_juncsl = 1.0/1.2134E+12;				// (L/ms)=8.2413e-13
-	var.J_ca_slmyo = 1.0/2.68510E+11;				// (L/ms)=3.2743E-12
+	var.J_ca_slmyo = 1.0/2.68510E+11;				// (L/ms)=3.2743E-12 (miss?) <-- 3.7243E-12
 
 	// Q10
 	//var.K_Q10 = 3.0;
@@ -83,11 +83,11 @@ void val_consts(FILE *fp1)
 		}
 
 	// Ultra Rapid delayed rectifier potassium current (Ikur)
-		if(var.celltype==0 && var.simtype==0){	// control
+		if(var.celltype==0 && (var.simtype==0 || var.simtype==2)){	// control
 			ikur.Gkur = 0.045;  //(nS/pF)
-		} else if(var.celltype==1 && var.simtype==0){	// AF 
+		} else if(var.celltype==1 && (var.simtype==0 || var.simtype==2)){	// AF 
 			ikur.Gkur = 0.045*0.5;  //(nS/pF)
-		} else if(var.celltype==2 && var.simtype==0){	// Right Atrirum 
+		} else if(var.celltype==2 && (var.simtype==0 || var.simtype==2)){	// Right Atrirum 
 			ikur.Gkur = 0.045*1.2;  //(nS/pF)
 		} else if(var.celltype==0 && var.simtype==1){	// with ISO stimulation 
 			ikur.Gkur = 0.045*3.0;  //(nS/pF)
@@ -102,11 +102,11 @@ void val_consts(FILE *fp1)
 		ikr.gkr = ikr.Gkr*sqrt(var.ko/5.4);
 
 	// Slow delayed rectifier potassium current (Iks)
-		if(var.celltype==0 && var.simtype==0){	//control
+		if(var.celltype==0 && (var.simtype==0 || var.simtype==2)){	//control
 			iks.Gks = 0.0035;
 		} else if(var.celltype==0 && var.simtype==1){	// with ISO stimulation 
 			iks.Gks = 3.0*0.0035; 
-		} else if(var.celltype==1 && var.simtype==0){	// AF case
+		} else if(var.celltype==1 && (var.simtype==0 || var.simtype==2)){	// AF case
 			iks.Gks = 2.0*0.0035; 
 		} else if(var.celltype==1 && var.simtype==1){	// AF case with ISO stimulation
 			iks.Gks = 4.0*0.0035; 
@@ -123,7 +123,7 @@ void val_consts(FILE *fp1)
 		iclca.kd_cl_ca = 100E-3;	// (mM)
 
 	// L-type calcium current
-		if(var.celltype == 0 && var.simtype==0){ // control
+		if(var.celltype == 0 && (var.simtype==0 || var.simtype==2)){ // control
 			ical.pca = 2.7E-4;	// (cm/s)
 			ical.pk = 1.35E-7;	// (cm/s)
 			ical.pna = 0.75E-8;	// (cm/s)
@@ -131,7 +131,7 @@ void val_consts(FILE *fp1)
 			ical.pca = 2.7E-4*1.5;	// (cm/s)
 			ical.pk = 1.35E-7*1.5;	// (cm/s)
 			ical.pna = 0.75E-8*1.5;	// (cm/s)
-		} else if(var.celltype == 1 && var.simtype == 0){ // AF case
+		} else if(var.celltype == 1 && (var.simtype == 0 || var.simtype==2)){ // AF case
 			ical.pca = 2.7E-4*0.5;	// (cm/s)
 			ical.pk = 1.35E-7*0.5;	// (cm/s)
 			ical.pna = 0.75E-8*0.5;	// (cm/s)
@@ -144,7 +144,7 @@ void val_consts(FILE *fp1)
 		ical.Qpow = (T-310.0)/10.0;
 
 	// Na/K Pump (NaK)
-	if(var.simtype==0){	// control
+	if(var.simtype==0 || var.simtype==2){	// control or Ach stimulation
 		inak.kmna = 11.0;	// (mM)
 	} else if(var.simtype==1){	// with ISP stimulation
 		inak.kmna = 11.0*(1.0-0.25);	// (mM)
@@ -184,7 +184,7 @@ void val_consts(FILE *fp1)
 
 	// Cl Background Current 
 		iclb.G = 9.0E-3; //(mS/uF)
-		if(var.simtype == 0){
+		if(var.simtype == 0 || var.simtype==2){
 			iclb.cftr = 0.0;
 		} else if(var.simtype == 1){
 			iclb.cftr = 4.9E-3;
@@ -196,7 +196,7 @@ void val_consts(FILE *fp1)
 
 	// SR calcium release flux, via RyR (Jrel)
 		jrel.hillSRCaP = 1.787;	// (mM) 
-		if(var.simtype==0){	// control
+		if(var.simtype==0 || var.simtype==2){	// control
 			jrel.Kmf = 2.5*0.246E-3;	// (mM) 
 		} else if(var.simtype == 1){	// with ISO stimulation
 			jrel.Kmf = (2.5-1.25)*0.246E-3;	// (mM)
@@ -206,11 +206,11 @@ void val_consts(FILE *fp1)
 		jrel.EC = 0.45;		// Ca_sr half-saturation constant of kcasr (mM)
 		jrel.maxsr = 15.0;
 		jrel.minsr = 1.0;
-		if(var.celltype == 0 && var.simtype == 0){	// control
+		if(var.celltype == 0 && (var.simtype == 0 || var.simtype==2)){	// control
 			jrel.koca = 10.0;	// (1/mM/mM/ms)
 		} else if(var.celltype == 0 && var.simtype == 1){ // with ISO stimulation
 			jrel.koca = 10.0+10.0;
-		} else if(var.celltype == 1 && var.simtype == 0){ // AF case 
+		} else if(var.celltype == 1 && (var.simtype == 0 || var.simtype==2)){ // AF case 
 			jrel.koca = 10.0+20.0;
 		} else if(var.celltype == 1 && var.simtype == 1){ // AF case with ISO stimulation
 			jrel.koca = 10.0+20.0;
@@ -220,9 +220,6 @@ void val_consts(FILE *fp1)
 		jrel.kom = 0.06;	// (1/ms)
 		jrel.Q10SRCaP = 2.6;
 		jrel.Vmax_SRCaP = 5.3114E-3;	// (mM/msec)-->(286 uM/L cytosol/sec)
-	// leakage of Ca from SR (I_leak)
-		//jleak.vleak = 0.00036;	// Maximal Ileak conductance (mM/ms)
-		//jxfer.vxfer = 0.0038;	// Maximal Ixfer conductance (mM/ms)
 
 	// Buffering parameters
 		buf.kon_na = 0.1E-3;	// (1/mM/ms)
@@ -231,7 +228,7 @@ void val_consts(FILE *fp1)
 		buf.Bmax_Nasl = 1.65;	// (mM)
 		// TnC low affinity
 		buf.kon_tncl = 32.7;	// (1/mM/ms)
-		if(var.simtype==0){
+		if(var.simtype==0 || var.simtype==2){
 			buf.koff_tncl = 19.6E-3;	// (1/ms)
 		} else if(var.simtype==1){
 			buf.koff_tncl = 1.5*19.6E-3;	// (1/ms)
@@ -269,13 +266,6 @@ void val_consts(FILE *fp1)
 		buf.kon_csqn = 100.0;
 		buf.koff_csqn = 65.0;
 		buf.Bmax_Csqn = 140.0E-3*var.vmyo/var.vsr;
-	// Myoplasmic Ca Ion Concentration Changes 
-		//buf.bufc = 0.2;   		// Max. [Ca] buffer concentration (mM)
-		//buf.kcai = 0.001;   	// Cai half-saturation constant for cytoplasmic buffer (mM)
-		//buf.bufsr = 10.0;     	// Total sarcoplasmic buffer concentration (mM)
-		//buf.kcasr = 0.3;  		// Ca_sr half-saturation constant for sarcoplasmic buffer (mM)
-		//buf.bufss = 0.4;   		// Total subspace buffer concentration (mM)
-		//buf.kcass = 0.00025;	// Ca_ss half-saturation constant for subspace buffer (mM)
 
 }
 

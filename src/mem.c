@@ -69,6 +69,9 @@ void initial_mem()
 	ncx.Thna=(Number *)calloc(VNMAX,sizeof(Number));
 	if( ncx.Thca==NULL || ncx.Thna==NULL ) exit(1);
 	
+	// ik,ach
+	ikach.Tss=(Number *)calloc(VNMAX,sizeof(Number));
+	if(ikach.Tss==NULL) exit(1);
 }
 
 
@@ -85,6 +88,7 @@ void closed_mem()
 	free(ical.Tdss); free(ical.Ttaud); free(ical.Tfss); free(ical.Ttauf); free(ical.Ttmp1); free(ical.Ttmp2);
 	free(inak.Tknai); free(inak.Tknao);
 	free(ncx.Thna); free(ncx.Thca);
+	free(ikach.Tss);
 
 }
 

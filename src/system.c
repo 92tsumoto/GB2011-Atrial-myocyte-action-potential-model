@@ -14,6 +14,7 @@ void function(double x[],double f[],double t)
 	comp_ik1(x);
 	comp_ito(x);
 	comp_ikur(x);
+	if(var.simtype==2) comp_ikach(x);
 	comp_inak(x);
 	comp_iclca(x);
 	comp_ical(x);
@@ -36,8 +37,11 @@ void function(double x[],double f[],double t)
 	//ina.tot_junc2 = 3.0*ncx.junc + 3.0*inak.junc + ical.cana_j;
 	//ina.tot_sl2 = 3.0*ncx.sl + 3.0*inak.sl + ical.cana_sl;
 
-	ik.tot = ito.ik + ikr.ik + iks.ik + ik1.ik -2.0*inak.na + ical.k + ikp.ik + ikur.ik;
-
+	if(var.simtype==2){
+		ik.tot = ito.ik + ikr.ik + iks.ik + ik1.ik -2.0*inak.na + ical.k + ikp.ik + ikur.ik + ikach.ik;
+	} else {
+		ik.tot = ito.ik + ikr.ik + iks.ik + ik1.ik -2.0*inak.na + ical.k + ikp.ik + ikur.ik;
+	}
 	ica.tot_junc = ical.junc + icab.junc + ipca.junc - 2.0*ncx.junc;
 	ica.tot_sl = ical.sl + icab.sl + ipca.sl - 2.0*ncx.sl;
 	

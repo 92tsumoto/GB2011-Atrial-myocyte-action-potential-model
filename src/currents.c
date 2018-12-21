@@ -1,5 +1,24 @@
 #include "syspara.h"
 
+void comp_ikach(double x[])
+{
+	
+	int iV=0;
+	double V1,V2,d1,d2;
+	
+	V1 = (x[0]+Emax)*dvm;
+	V2 = (int)V1;
+	d1 = V1-V2;
+	d2 = 1.0-d1;
+	iV = (int)V2;
+
+	ikach.ss = ikach.Tss[iV]*d2 + ikach.Tss[iV+1]*d1;
+
+	ikach.ik = 1.0/(1.0+pow((0.03/var.ACh),2.1))*ikach.ss*(x[0]-var.Ek);
+	//printf("ikach=%lf\n",ikach.ik);
+
+}
+
 void comp_ina(double x[])
 {
 	//MKL_INT iV=0;
