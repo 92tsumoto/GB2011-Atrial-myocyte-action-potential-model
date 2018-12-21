@@ -4,9 +4,10 @@
 0
 
 /* simulation type */
-/* simtype == 0 --> with ISO stimulation */
+/* simtype == 0 --> without ISO stimulation */
 /* simtype == 1 --> with ISO stimulation */
-0
+/* simtype == 2 --> with Ach stimulation */
+2
 
 /* Base cycel length */
 //500
@@ -22,6 +23,9 @@
 /* Istim */
 -12.5	
 //0.0	
+
+/* Ach concentration */
+1.0
 
 /* number of data */
 1
@@ -124,7 +128,7 @@
 0.1
 
 1               /* number of period */
-200         /* strip for integral */
+200         	/* strip for integral */
 1               /* poincare flag 0 --- poincare/1 --- orbit */
 0               /* write file 0 --- not write/1 --- write */
 0               /* write flag 0 --- poincare/1 --- orbit */
